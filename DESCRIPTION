@@ -1,0 +1,14 @@
+Package: gridR
+Type: Package
+Title: gridR: create different scalings of uniformly spaced grids.
+Version: 1.0
+Date: 2013-03-20
+Author: Florian Oswald
+Maintainer: Florian Oswald <florian.oswald@gmail.com>
+Description: S4 class that generates a gridR object with slots "lb", "ub" and
+    "num.points". From there one can get different scaled versions of
+    seq(lb,ub,le=num.points). each method comes with a plotting method as well,
+    so you can see where the points are.
+License: GPL
+Collate:
+    'gridR.r'
