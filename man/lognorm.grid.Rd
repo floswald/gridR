@@ -1,8 +1,8 @@
-\name{gridR.lognorm}
-\alias{gridR.lognorm}
+\name{lognorm.grid}
+\alias{lognorm.grid}
 \title{points distributed according to log normal}
 \usage{
-  gridR.lognorm(b, n, plotit, ...)
+  lognorm.grid(b, n, plotit, ...)
 }
 \arguments{
   \item{b}{numeric vector of length 2. bounds.}
@@ -22,12 +22,15 @@
   distribute points according to the log normal density.
   only for points in positive range.
 }
+\examples{
+gridR(bounds=c(1,5),num.points=10,spacing="lognorm.grid",plotit=TRUE,meanlog=3,sdlog=0.5)
+}
 \seealso{
   \link[stats]{dlnorm}
 
-  Other grid.makers: \code{\link{gridR.beta}},
-  \code{\link{gridR.expo}}, \code{\link{gridR.expo2}},
-  \code{\link{gridR.gumbel}}, \code{\link{gridR.hyp.sine}},
-  \code{\link{gridR.log.grid}}
+  Other grid.makers: \code{\link{beta.grid}},
+  \code{\link{expo}}, \code{\link{expo2}},
+  \code{\link{gumbel.grid}}, \code{\link{hyp.sine}},
+  \code{\link{log.grid}}
 }
 

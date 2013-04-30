@@ -1,8 +1,8 @@
-\name{gridR.gumbel}
-\alias{gridR.gumbel}
+\name{gumbel.grid}
+\alias{gumbel.grid}
 \title{points distributed according to gumbel pdf}
 \usage{
-  gridR.gumbel(b, n, plotit, ...)
+  gumbel.grid(b, n, plotit, ...)
 }
 \arguments{
   \item{b}{numeric vector of length 2. bounds.}
@@ -23,12 +23,15 @@
   location and scale parameter to change shape of
   distribution.
 }
+\examples{
+gridR(bounds=c(-1,5),num.points=10,spacing="gumbel.grid",plotit=TRUE,loc=1,scale=1.1)
+}
 \seealso{
   \link[evd]{pgumbel}
 
-  Other grid.makers: \code{\link{gridR.beta}},
-  \code{\link{gridR.expo}}, \code{\link{gridR.expo2}},
-  \code{\link{gridR.hyp.sine}},
-  \code{\link{gridR.log.grid}}, \code{\link{gridR.lognorm}}
+  Other grid.makers: \code{\link{beta.grid}},
+  \code{\link{expo}}, \code{\link{expo2}},
+  \code{\link{hyp.sine}}, \code{\link{log.grid}},
+  \code{\link{lognorm.grid}}
 }
 

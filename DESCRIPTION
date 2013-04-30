@@ -12,3 +12,5 @@ Description: S4 class that generates a gridR object with slots "lb", "ub" and
 License: GPL
 Collate:
     'gridR.r'
+    'grid.makers.r'
+    'knot.select.r'

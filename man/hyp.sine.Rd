@@ -1,8 +1,8 @@
-\name{gridR.hyp.sine}
-\alias{gridR.hyp.sine}
+\name{hyp.sine}
+\alias{hyp.sine}
 \title{hyperbolic sine scaling towards zero}
 \usage{
-  gridR.hyp.sine(b, n, plotit)
+  hyp.sine(b, n, plotit)
 }
 \arguments{
   \item{b}{numeric vector of length 2. bounds.}
@@ -18,10 +18,13 @@
   increase concentration of points symmetrically around
   zero.
 }
+\examples{
+gridR(bounds=c(-10,10),num.points=20,spacing="hyp.sine",plotit=TRUE)
+}
 \seealso{
-  Other grid.makers: \code{\link{gridR.beta}},
-  \code{\link{gridR.expo}}, \code{\link{gridR.expo2}},
-  \code{\link{gridR.gumbel}}, \code{\link{gridR.log.grid}},
-  \code{\link{gridR.lognorm}}
+  Other grid.makers: \code{\link{beta.grid}},
+  \code{\link{expo}}, \code{\link{expo2}},
+  \code{\link{gumbel.grid}}, \code{\link{log.grid}},
+  \code{\link{lognorm.grid}}
 }
 

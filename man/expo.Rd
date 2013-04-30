@@ -1,8 +1,8 @@
-\name{gridR.expo}
-\alias{gridR.expo}
+\name{expo}
+\alias{expo}
 \title{exponentially scaled grid}
 \usage{
-  gridR.expo(b, n, plotit)
+  expo(b, n, plotit)
 }
 \arguments{
   \item{b}{numeric vector of length 2. bounds.}
@@ -18,10 +18,13 @@
   make a grid with more points towards the lower bound.
   adjusts to negative lower bound as well.
 }
+\examples{
+gridR(bounds=c(-1,5),num.points=10,spacing="expo",plotit=TRUE)
+}
 \seealso{
-  Other grid.makers: \code{\link{gridR.beta}},
-  \code{\link{gridR.expo2}}, \code{\link{gridR.gumbel}},
-  \code{\link{gridR.hyp.sine}},
-  \code{\link{gridR.log.grid}}, \code{\link{gridR.lognorm}}
+  Other grid.makers: \code{\link{beta.grid}},
+  \code{\link{expo2}}, \code{\link{gumbel.grid}},
+  \code{\link{hyp.sine}}, \code{\link{log.grid}},
+  \code{\link{lognorm.grid}}
 }
 

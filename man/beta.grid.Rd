@@ -1,8 +1,8 @@
-\name{gridR.beta}
-\alias{gridR.beta}
+\name{beta.grid}
+\alias{beta.grid}
 \title{points distributed according to beta dist}
 \usage{
-  gridR.beta(b, n, plotit, ...)
+  beta.grid(b, n, plotit, ...)
 }
 \arguments{
   \item{b}{numeric vector of length 2. bounds.}
@@ -25,12 +25,15 @@
   shape1, shape2 and noncentrality parameter to affect
   shape.
 }
+\examples{
+gridR(bounds=c(-1,5),num.points=10,spacing="beta.grid",plotit=TRUE,shape1=2,shape2=5,ncp=1)
+}
 \seealso{
   \link[stats]{dbeta}
 
-  Other grid.makers: \code{\link{gridR.expo}},
-  \code{\link{gridR.expo2}}, \code{\link{gridR.gumbel}},
-  \code{\link{gridR.hyp.sine}},
-  \code{\link{gridR.log.grid}}, \code{\link{gridR.lognorm}}
+  Other grid.makers: \code{\link{expo}},
+  \code{\link{expo2}}, \code{\link{gumbel.grid}},
+  \code{\link{hyp.sine}}, \code{\link{log.grid}},
+  \code{\link{lognorm.grid}}
 }
 
