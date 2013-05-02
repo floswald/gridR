@@ -1,3 +1,4 @@
-export(gridR)
+export(grid.maker)
 export(knot.select)
 import(evd)
+import(splines)

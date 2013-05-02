@@ -1,6 +1,6 @@
 \name{beta.grid}
 \alias{beta.grid}
-\title{points distributed according to beta dist}
+\title{points distributed according to beta dist: internal function}
 \usage{
   beta.grid(b, n, plotit, ...)
 }
@@ -26,14 +26,14 @@
   shape.
 }
 \examples{
-gridR(bounds=c(-1,5),num.points=10,spacing="beta.grid",plotit=TRUE,shape1=2,shape2=5,ncp=1)
+grid.maker(bounds=c(-1,5),num.points=10,spacing="beta.grid",plotit=TRUE,shape1=2,shape2=5,ncp=1)
 }
 \seealso{
   \link[stats]{dbeta}
 
-  Other grid.makers: \code{\link{expo}},
-  \code{\link{expo2}}, \code{\link{gumbel.grid}},
-  \code{\link{hyp.sine}}, \code{\link{log.grid}},
+  Other grid.makers: \code{\link{exp.grid}},
+  \code{\link{gumbel.grid}}, \code{\link{hyp.sine}},
+  \code{\link{log.g}}, \code{\link{log.g2}},
   \code{\link{lognorm.grid}}
 }
 

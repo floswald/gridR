@@ -1,6 +1,6 @@
 \name{hyp.sine}
 \alias{hyp.sine}
-\title{hyperbolic sine scaling towards zero}
+\title{hyperbolic sine scaling towards zero: internal function}
 \usage{
   hyp.sine(b, n, plotit)
 }
@@ -19,12 +19,12 @@
   zero.
 }
 \examples{
-gridR(bounds=c(-10,10),num.points=20,spacing="hyp.sine",plotit=TRUE)
+grid.maker(bounds=c(-10,10),num.points=20,spacing="hyp.sine",plotit=TRUE)
 }
 \seealso{
   Other grid.makers: \code{\link{beta.grid}},
-  \code{\link{expo}}, \code{\link{expo2}},
-  \code{\link{gumbel.grid}}, \code{\link{log.grid}},
+  \code{\link{exp.grid}}, \code{\link{gumbel.grid}},
+  \code{\link{log.g}}, \code{\link{log.g2}},
   \code{\link{lognorm.grid}}
 }
 

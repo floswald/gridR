@@ -1,6 +1,6 @@
 \name{lognorm.grid}
 \alias{lognorm.grid}
-\title{points distributed according to log normal}
+\title{points distributed according to log normal: internal function}
 \usage{
   lognorm.grid(b, n, plotit, ...)
 }
@@ -23,14 +23,14 @@
   only for points in positive range.
 }
 \examples{
-gridR(bounds=c(1,5),num.points=10,spacing="lognorm.grid",plotit=TRUE,meanlog=3,sdlog=0.5)
+grid.maker(bounds=c(1,5),num.points=10,spacing="lognorm.grid",plotit=TRUE,meanlog=3,sdlog=0.5)
 }
 \seealso{
   \link[stats]{dlnorm}
 
   Other grid.makers: \code{\link{beta.grid}},
-  \code{\link{expo}}, \code{\link{expo2}},
-  \code{\link{gumbel.grid}}, \code{\link{hyp.sine}},
-  \code{\link{log.grid}}
+  \code{\link{exp.grid}}, \code{\link{gumbel.grid}},
+  \code{\link{hyp.sine}}, \code{\link{log.g}},
+  \code{\link{log.g2}}
 }
 

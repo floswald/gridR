@@ -1,0 +1,1009 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{natbib}
+\usepackage{url}
+\end_preamble
+\use_default_options true
+\begin_modules
+knitr
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 11
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks true
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize a4paper
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\boxbgcolor #dbdbdb
+\branch answer
+\selected 1
+\filename_suffix 0
+\color #faf0e6
+\end_branch
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\rightmargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip smallskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+
+\family typewriter
+\series bold
+\size normal
+gridR
+\family default
+: 
+\series default
+Grid Builder and Spline Knot Selector for R
+\end_layout
+
+\begin_layout Author
+Florian Oswald
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://github.com/floswald/gridR
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<setup,echo=FALSE,results='hide',message=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+knit_hooks$set(par=function(before,options,envir){if (before) par(mar=c(4,4,.1,.1)
+,cex.lab=1,cex.axis=1,mgp=c(2,.7,0),tcl=-0.3,las=1)},crop=hook_pdfcrop)
+\end_layout
+
+\begin_layout Plain Layout
+
+opts_chunk$set(fig.path='lyx-figures/',fig.align='center',fig.show='hold',out.width=
+'.9
+\backslash
+
+\backslash
+linewidth',tidy=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Intro
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\series bold
+\size normal
+gridR
+\family default
+\series default
+\size default
+ is a small utility package that helps with an ubiquitous task in 
+\series bold
+state space modelling
+\series default
+ or 
+\series bold
+function approximation
+\series default
+ in general: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Shaded
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status collapsed
+
+\begin_layout Plain Layout
+\noindent
+\align center
+making it easy to select different grids on which to evaluate the model/function.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is often the case that an analyst starts out the first draft by setting
+ a certain space to a 
+\emph on
+uniformly spaced grid
+\emph default
+ as in 
+\family typewriter
+seq(from,to,length)
+\family default
+, with the intention of assessing the robustness of the results with respect
+ to this choice later on.
+ 
+\end_layout
+
+\begin_layout Standard
+But, alas, this is seldom done.
+ It is worth mentioning at this point that approximations are extremely
+ sensitive to where the approximation is measured.
+ The obvious response is the rule of thumb that 
+\emph on
+the more points, the better
+\emph default
+ -- which is certainly true -- but frequently the strategy of filling out
+ 
+\family typewriter
+seq(from,to,length=N)
+\family default
+ with many points 
+\family typewriter
+N
+\family default
+ is not practical because it implies great computational cost.
+ 
+\end_layout
+
+\begin_layout Standard
+In such a sitution 
+\family typewriter
+\series bold
+\size normal
+gridR
+\family default
+\series default
+\size default
+ facilitates an easy way to experiment with different grids.
+ There are currently 7 different spacing rules available via 
+\family typewriter
+grid.maker()
+\family default
+ which transform the uniform grid.
+ Extensions are easy to make by any user, just extend on of the existing
+ makers with your mapping.
+ 
+\end_layout
+
+\begin_layout Standard
+The analyst can use some prior knowledge about where in the state space
+ a greater number of points is required whn choosing the appropriate rule.
+ Each 
+\family typewriter
+grid.maker()
+\family default
+ has a plotting method to help making this choice.
+\end_layout
+
+\begin_layout Standard
+Relatedly, the package contains a function 
+\family typewriter
+knot.select()
+\family default
+ to construct 
+\emph on
+knot vectors
+\emph default
+ for use with 
+\family typewriter
+splines::splineDesign()
+\family default
+.
+ The usefulness of this may not be immediately obvious, given that functions
+ like 
+\family typewriter
+splines::bs()
+\family default
+ and 
+\family typewriter
+splines::ns()
+\family default
+ take care of this task internally.
+ Both functions evaluate the polynomial basis function of the spline at
+ suitably chosen quantiles of the supplied data.
+ The need to select a knot vector in a more flexible kind of way and to
+ actually 
+\emph on
+see
+\emph default
+ the knot vector and use it together with 
+\family typewriter
+splines::splineDesign()
+\family default
+ arises again in function approximation, more so than in, say, regression
+ analysis with splines.
+ Let it be said that 
+\family typewriter
+splines::bs()
+\family default
+ is close to this, but it lacks some flexiblity.
+ For instance, one cannot compute the derivative of the basis function.
+ This is important for example in applications where the user needs to supply
+ an analytic gradient of some function to a numeric optimization routine.
+ A judicious choice of knot placement can have great influence on the quality
+ of approximation and indeed the value of the solution to the optimization
+ problem itself.
+\end_layout
+
+\begin_layout Standard
+I'll now demonstrate the two main functions of the package.
+ 
+\end_layout
+
+\begin_layout Section
+Some 
+\family typewriter
+grid.maker()
+\family default
+ sample usage
+\end_layout
+
+\begin_layout Standard
+Suppose we are interested in finding an approximating to the unknown function
+ 
+\begin_inset Formula $f(x):\mathbb{R}\mapsto\mathbb{R}$
+\end_inset
+
+, and let's call it 
+\begin_inset Formula $\hat{f}$
+\end_inset
+
+.
+ One way to get 
+\begin_inset Formula $\hat{f}$
+\end_inset
+
+ is to compute 
+\begin_inset Formula $f(x)$
+\end_inset
+
+ at a finite number of points 
+\begin_inset Formula $X=\left\{ x_{i}\right\} _{i=1}^{N}$
+\end_inset
+
+ and establish a rule to 
+\emph on
+connect the dots.
+ 
+\family typewriter
+\series bold
+\size normal
+\emph default
+gridR
+\family default
+\series default
+\size default
+ is useful for trying out different 
+\begin_inset Formula $X$
+\end_inset
+
+'s with little effort.
+ 
+\end_layout
+
+\begin_layout Subsection
+Log Scaling
+\end_layout
+
+\begin_layout Standard
+Log scaling the uniform grid places more points towards the lower bound.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<log,par=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(gridR)
+\end_layout
+
+\begin_layout Plain Layout
+
+b <- c(-1,5)
+\end_layout
+
+\begin_layout Plain Layout
+
+n <- 25
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- grid.maker(bounds=b,num.points=n,spacing="log.g",plotit=TRUE) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Double Log Scaling
+\end_layout
+
+\begin_layout Standard
+Same idea, but apply the log transformation twice.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<log2,par=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+b <- c(-1,5)
+\end_layout
+
+\begin_layout Plain Layout
+
+n <- 25
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- grid.maker(bounds=b,num.points=n,spacing="log.g2",plotit=TRUE) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Hyperbolic Sine Scaling
+\end_layout
+
+\begin_layout Standard
+This transformation increases the point density around zero in a symmetric
+ kind of way.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<hype,par=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+b <- c(-10,10)
+\end_layout
+
+\begin_layout Plain Layout
+
+n <- 40
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- grid.maker(bounds=b,num.points=n,spacing="hyp.sine",plotit=TRUE) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Exponential Scaling
+\end_layout
+
+\begin_layout Standard
+The exponential transformation bunches the points at the upper bound.
+ Quickly takes off as the upper bound gets large.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<exp,par=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+b <- c(-1,3)
+\end_layout
+
+\begin_layout Plain Layout
+
+n <- 40
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- grid.maker(bounds=b,num.points=n,spacing="exp.grid",plotit=TRUE) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Log normal scaling
+\end_layout
+
+\begin_layout Standard
+This is the first in a series of transformations that can be flexibly changed
+ by passing additional parameters.
+ Can be useful if you need a relatively long tail.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<lnorm,out.width='.8
+\backslash
+
+\backslash
+linewidth',tidy=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+b <- c(0,14)
+\end_layout
+
+\begin_layout Plain Layout
+
+n <- 40
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- grid.maker(bounds=b,num.points=n,spacing="lognorm.grid",plotit=TRUE,meanlog=5,
+sdlog=3) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Gumbel density scaling
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<gumbel,out.width='.8
+\backslash
+
+\backslash
+linewidth',tidy=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+n <- 40
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- grid.maker(bounds=c(-1,50),num.points=n,spacing="gumbel.grid",plotit=TRUE,loc=
+10,scale=10)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Beta density scaling
+\end_layout
+
+\begin_layout Standard
+The beta is well known to be extremely flexible.
+ Playing around with the shape parameters will give you any kind of point
+ allocation you may desire.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<beta,out.width='.8
+\backslash
+
+\backslash
+linewidth',tidy=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+n <- 40
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- grid.maker(bounds=c(-1,5),num.points=n,spacing="beta.grid",plotit=TRUE,shape1=
+2,shape2=5,ncp=0)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To illustrate, let's change those parameters:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<beta2,out.width='.8
+\backslash
+
+\backslash
+linewidth',tidy=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+n <- 40
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- grid.maker(bounds=c(-10,5),num.points=n,spacing="beta.grid",plotit=TRUE,shape1
+=0.5,shape2=0.5,ncp=0)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+
+\family typewriter
+Knot.Select()
+\end_layout
+
+\begin_layout Subsection
+Case 1: strong prior about optimal knot location
+\end_layout
+
+\begin_layout Standard
+We'll construct a grid 
+\begin_inset Formula $x$
+\end_inset
+
+ and then use all except the first and last grid point as interior knots.
+ By setting 
+\family typewriter
+num.basis=NULL,
+\family default
+ we let the algorithm figure out how many basis functions we'll need.
+ This is useful in cases where you have a very strong prior on where your
+ interior knots should be (i.e.
+ you think they should be 
+\emph on
+exactly 
+\emph default
+on 
+\begin_inset Formula $x$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<select,out.width='.8
+\backslash
+
+\backslash
+linewidth',tidy=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+n <- 17  # I want n-2 = 15 interior knots
+\end_layout
+
+\begin_layout Plain Layout
+
+deg <- 4 # I want spline degree 4 
+\end_layout
+
+\begin_layout Plain Layout
+
+# I will get 15 + deg + 1 = 20 basis functions
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- grid.maker(c(-10,15),num.points=n,spacing="log.g2") 
+\end_layout
+
+\begin_layout Plain Layout
+
+k <- knot.select(degree=deg,x=x,num.basis=NULL,plotit=TRUE) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Case 2: fix 
+\family typewriter
+num.basis
+\family default
+ and place knots at quantiles of data
+\end_layout
+
+\begin_layout Standard
+In this case we fix the number of basis functions we want and let the algorithm
+ place the knots at equispaced quantiles of the data.
+ Depending on the number of available interior knots (available after we
+ constructed the multiplicities at both ends of the knot vector), the quantiles
+ are
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+# interior knots
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+quantiles
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.5
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{3},\frac{2}{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{4},\frac{1}{2},\frac{3}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{5},\frac{2}{5},\frac{3}{5},\frac{4}{5}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\dots$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\dots$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<select2,out.width='.8
+\backslash
+
+\backslash
+linewidth',tidy=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+nb <- 8  # I want 8 basis functions
+\end_layout
+
+\begin_layout Plain Layout
+
+# I supply the same grid x
+\end_layout
+
+\begin_layout Plain Layout
+
+k <- knot.select(degree=deg,x=x,num.basis=nb,plotit=TRUE) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

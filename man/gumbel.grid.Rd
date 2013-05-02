@@ -1,6 +1,6 @@
 \name{gumbel.grid}
 \alias{gumbel.grid}
-\title{points distributed according to gumbel pdf}
+\title{points distributed according to gumbel pdf: internal function}
 \usage{
   gumbel.grid(b, n, plotit, ...)
 }
@@ -24,14 +24,14 @@
   distribution.
 }
 \examples{
-gridR(bounds=c(-1,5),num.points=10,spacing="gumbel.grid",plotit=TRUE,loc=1,scale=1.1)
+grid.maker(bounds=c(-1,5),num.points=10,spacing="gumbel.grid",plotit=TRUE,loc=1,scale=1.1)
 }
 \seealso{
   \link[evd]{pgumbel}
 
   Other grid.makers: \code{\link{beta.grid}},
-  \code{\link{expo}}, \code{\link{expo2}},
-  \code{\link{hyp.sine}}, \code{\link{log.grid}},
+  \code{\link{exp.grid}}, \code{\link{hyp.sine}},
+  \code{\link{log.g}}, \code{\link{log.g2}},
   \code{\link{lognorm.grid}}
 }
 

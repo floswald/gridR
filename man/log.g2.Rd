@@ -1,8 +1,8 @@
-\name{expo2}
-\alias{expo2}
-\title{twice exponentially scaled grid}
+\name{log.g2}
+\alias{log.g2}
+\title{twice log scaled grid: internal function}
 \usage{
-  expo2(b, n, plotit)
+  log.g2(b, n, plotit)
 }
 \arguments{
   \item{b}{numeric vector of length 2. bounds.}
@@ -19,12 +19,12 @@
   bound. adjusts to negative lower bound as well.
 }
 \examples{
-gridR(bounds=c(-1,5),num.points=10,spacing="expo2",plotit=TRUE)
+grid.maker(bounds=c(-1,5),num.points=10,spacing="log2",plotit=TRUE)
 }
 \seealso{
   Other grid.makers: \code{\link{beta.grid}},
-  \code{\link{expo}}, \code{\link{gumbel.grid}},
-  \code{\link{hyp.sine}}, \code{\link{log.grid}},
+  \code{\link{exp.grid}}, \code{\link{gumbel.grid}},
+  \code{\link{hyp.sine}}, \code{\link{log.g}},
   \code{\link{lognorm.grid}}
 }
 

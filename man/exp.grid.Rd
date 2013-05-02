@@ -1,8 +1,8 @@
-\name{log.grid}
-\alias{log.grid}
-\title{log scaled grid: more points at upper bound}
+\name{exp.grid}
+\alias{exp.grid}
+\title{exponentially scaled grid: more points at upper bound: internal function}
 \usage{
-  log.grid(b, n, plotit)
+  exp.grid(b, n, plotit)
 }
 \arguments{
   \item{b}{numeric vector of length 2. bounds.}
@@ -18,12 +18,12 @@
   concentrate points towards the upper bound.
 }
 \examples{
-gridR(bounds=c(-1,5),num.points=10,spacing="log.grid",plotit=TRUE)
+grid.maker(bounds=c(-1,5),num.points=10,spacing="exp.grid",plotit=TRUE)
 }
 \seealso{
   Other grid.makers: \code{\link{beta.grid}},
-  \code{\link{expo}}, \code{\link{expo2}},
   \code{\link{gumbel.grid}}, \code{\link{hyp.sine}},
+  \code{\link{log.g}}, \code{\link{log.g2}},
   \code{\link{lognorm.grid}}
 }
 
