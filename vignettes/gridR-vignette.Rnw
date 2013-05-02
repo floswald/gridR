@@ -1,0 +1,262 @@
+
+
+%% LyX 2.0.4 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage[a4paper]{geometry}
+\geometry{verbose,lmargin=2cm,rmargin=2cm}
+\setlength{\parskip}{\smallskipamount}
+\setlength{\parindent}{0pt}
+\usepackage{color}
+\definecolor{shadecolor}{rgb}{0.859375, 0.859375, 0.859375}
+\usepackage{framed}
+\usepackage{url}
+\usepackage{amssymb}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},backref=false,colorlinks=true]
+ {hyperref}
+\usepackage{breakurl}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+% \VignetteIndexEntry{Vignette for gridR package}
+% \VignetteEngine{knitr}
+
+\makeatother
+
+\begin{document}
+
+
+
+\title{\texttt{\textbf{\normalsize gridR}}\textbf{\normalsize : }{\normalsize Grid
+Builder and Spline Knot Selector for R}}
+
+
+\author{Florian Oswald}
+
+\maketitle
+\noindent \begin{center}
+\url{https://github.com/floswald/gridR}
+\par\end{center}
+
+<<setup,echo=FALSE,results='hide',message=FALSE>>=
+library(knitr)
+knit_hooks$set(par=function(before,options,envir){if (before) par(mar=c(4,4,.1,.1),cex.lab=1,cex.axis=1,mgp=c(2,.7,0),tcl=-0.3,las=1)},crop=hook_pdfcrop)
+opts_chunk$set(fig.path='lyx-figures/',fig.align='center',fig.show='hold',out.width='.9\\linewidth',tidy=TRUE)
+@
+
+
+\section{Intro}
+
+\texttt{\textbf{gridR}} is a small utility package that helps with
+an ubiquitous task in \textbf{state space modelling} or \textbf{function
+approximation} in general: 
+
+\begin{minipage}[t]{1\columnwidth}%
+\begin{shaded}%
+\noindent \begin{center}
+making it easy to select different grids on which to evaluate the
+model/function. 
+\par\end{center}\end{shaded}%
+\end{minipage}
+
+It is often the case that an analyst starts out the first draft by
+setting a certain space to a \emph{uniformly spaced grid} as in \texttt{seq(from,to,length)},
+with the intention of assessing the robustness of the results with
+respect to this choice later on. 
+
+But, alas, this is seldom done. It is worth mentioning at this point
+that approximations are extremely sensitive to where the approximation
+is measured. The obvious response is the rule of thumb that \emph{the
+more points, the better} -- which is certainly true -- but frequently
+the strategy of filling out \texttt{seq(from,to,length=N)} with many
+points \texttt{N} is not practical because it implies great computational
+cost. 
+
+In such a sitution \texttt{\textbf{gridR}} facilitates an easy way
+to experiment with different grids. There are currently 7 different
+spacing rules available via \texttt{grid.maker()} which transform
+the uniform grid. Extensions are easy to make by any user, just extend
+on of the existing makers with your mapping. 
+
+The analyst can use some prior knowledge about where in the state
+space a greater number of points is required whn choosing the appropriate
+rule. Each \texttt{grid.maker()} has a plotting method to help making
+this choice.
+
+Relatedly, the package contains a function \texttt{knot.select()}
+to construct \emph{knot vectors} for use with \texttt{splines::splineDesign()}.
+The usefulness of this may not be immediately obvious, given that
+functions like \texttt{splines::bs()} and \texttt{splines::ns()} take
+care of this task internally. Both functions evaluate the polynomial
+basis function of the spline at suitably chosen quantiles of the supplied
+data. The need to select a knot vector in a more flexible kind of
+way and to actually \emph{see} the knot vector and use it together
+with \texttt{splines::splineDesign()} arises again in function approximation,
+more so than in, say, regression analysis with splines. Let it be
+said that \texttt{splines::bs()} is close to this, but it lacks some
+flexiblity. For instance, one cannot compute the derivative of the
+basis function. This is important for example in applications where
+the user needs to supply an analytic gradient of some function to
+a numeric optimization routine. A judicious choice of knot placement
+can have great influence on the quality of approximation and indeed
+the value of the solution to the optimization problem itself.
+
+I'll now demonstrate the two main functions of the package. 
+
+
+\section{Some \texttt{grid.maker()} sample usage}
+
+Suppose we are interested in finding an approximating to the unknown
+function $f(x):\mathbb{R}\mapsto\mathbb{R}$, and let's call it $\hat{f}$.
+One way to get $\hat{f}$ is to compute $f(x)$ at a finite number
+of points $X=\left\{ x_{i}\right\} _{i=1}^{N}$ and establish a rule
+to \emph{connect the dots. }\texttt{\textbf{gridR}} is useful for
+trying out different $X$'s with little effort. 
+
+
+\subsection{Log Scaling}
+
+Log scaling the uniform grid places more points towards the lower
+bound. 
+
+<<log,par=TRUE>>=
+library(gridR)
+b <- c(-1,5)
+n <- 25
+x <- grid.maker(bounds=b,num.points=n,spacing="log.g",plotit=TRUE) 
+@
+
+
+\subsection{Double Log Scaling}
+
+Same idea, but apply the log transformation twice. 
+
+<<log2,par=TRUE>>=
+b <- c(-1,5)
+n <- 25
+x <- grid.maker(bounds=b,num.points=n,spacing="log.g2",plotit=TRUE) 
+@
+
+
+\subsection{Hyperbolic Sine Scaling}
+
+This transformation increases the point density around zero in a symmetric
+kind of way.
+
+<<hype,par=TRUE>>=
+b <- c(-10,10)
+n <- 40
+x <- grid.maker(bounds=b,num.points=n,spacing="hyp.sine",plotit=TRUE) 
+@
+
+
+\subsection{Exponential Scaling}
+
+The exponential transformation bunches the points at the upper bound.
+Quickly takes off as the upper bound gets large.
+
+<<exp,par=TRUE>>=
+b <- c(-1,3)
+n <- 40
+x <- grid.maker(bounds=b,num.points=n,spacing="exp.grid",plotit=TRUE) 
+@
+
+
+\subsection{Log normal scaling}
+
+This is the first in a series of transformations that can be flexibly
+changed by passing additional parameters. Can be useful if you need
+a relatively long tail.
+
+<<lnorm,out.width='.8\\linewidth',tidy=TRUE>>=
+b <- c(0,14)
+n <- 40
+x <- grid.maker(bounds=b,num.points=n,spacing="lognorm.grid",plotit=TRUE,meanlog=5,sdlog=3) 
+@
+
+
+\subsection{Gumbel density scaling}
+
+<<gumbel,out.width='.8\\linewidth',tidy=TRUE>>=
+n <- 40
+x <- grid.maker(bounds=c(-1,50),num.points=n,spacing="gumbel.grid",plotit=TRUE,loc=10,scale=10)
+@
+
+
+\subsection{Beta density scaling}
+
+The beta is well known to be extremely flexible. Playing around with
+the shape parameters will give you any kind of point allocation you
+may desire.
+
+<<beta,out.width='.8\\linewidth',tidy=TRUE>>=
+n <- 40
+x <- grid.maker(bounds=c(-1,5),num.points=n,spacing="beta.grid",plotit=TRUE,shape1=2,shape2=5,ncp=0)
+@
+
+To illustrate, let's change those parameters:
+
+<<beta2,out.width='.8\\linewidth',tidy=TRUE>>=
+n <- 40
+x <- grid.maker(bounds=c(-10,5),num.points=n,spacing="beta.grid",plotit=TRUE,shape1=0.5,shape2=0.5,ncp=0)
+@
+
+
+\section{\texttt{Knot.Select()}}
+
+
+\subsection{Case 1: strong prior about optimal knot location}
+
+We'll construct a grid $x$ and then use all except the first and
+last grid point as interior knots. By setting \texttt{num.basis=NULL,}
+we let the algorithm figure out how many basis functions we'll need.
+This is useful in cases where you have a very strong prior on where
+your interior knots should be (i.e. you think they should be \emph{exactly
+}on $x$).
+
+<<select,out.width='.8\\linewidth',tidy=TRUE>>=
+n <- 17  # I want n-2 = 15 interior knots
+deg <- 4 # I want spline degree 4 
+# I will get 15 + deg + 1 = 20 basis functions
+x <- grid.maker(c(-10,15),num.points=n,spacing="log.g2") 
+k <- knot.select(degree=deg,x=x,num.basis=NULL,plotit=TRUE) 
+@
+
+
+\subsection{Case 2: fix \texttt{num.basis} and place knots at quantiles of data}
+
+In this case we fix the number of basis functions we want and let
+the algorithm place the knots at equispaced quantiles of the data.
+Depending on the number of available interior knots (available after
+we constructed the multiplicities at both ends of the knot vector),
+the quantiles are
+
+\noindent \begin{center}
+\begin{tabular}{c|c}
+\# interior knots & quantiles\tabularnewline
+\hline 
+\hline 
+1 & 0.5\tabularnewline
+2 & $\frac{1}{3},\frac{2}{3}$\tabularnewline
+3 & $\frac{1}{4},\frac{1}{2},\frac{3}{4}$\tabularnewline
+4 & $\frac{1}{5},\frac{2}{5},\frac{3}{5},\frac{4}{5}$\tabularnewline
+$\dots$ & $\dots$\tabularnewline
+\hline 
+\end{tabular}
+\par\end{center}
+
+<<select2,out.width='.8\\linewidth',tidy=TRUE>>=
+nb <- 8  # I want 8 basis functions
+# I supply the same grid x
+k <- knot.select(degree=deg,x=x,num.basis=nb,plotit=TRUE) 
+@
+\end{document}
